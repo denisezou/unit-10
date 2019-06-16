@@ -1,7 +1,7 @@
-require("dotenv").config();
+require('dotenv').config();
 
-const keys = require("./keys.js");
-
+const keys = require('./keys.js');
+const request= require('request')
 const Spotify = require('node-spotify-api');
 
 let spotify = new Spotify(keys.spotify);
@@ -34,18 +34,35 @@ switch (input) {
 whichCommand(input, searchterm);
 
 function concertThis () {
-    console.log('\n ------------------\n');
-    request ("https://rest.bandsintown.com/artists/" + searchterms + 
-    "/events?app_id=trilogy")
-        if (!error) {
+    console.log('\n ------------------------------------------\n')
 
-            let theBand = JSON.parse(body);
-            if (theBand.length > 0){
-                console.log('\n\ Artist: ')
-            
+    if (searchterm === undefined) {
+        searchterm = "Taylor Swift";
+        concertDeets();
+    } else if (searchterm !== undefined) {
+        concertDeets();
+    }
+    }
+
+function concertDeets () {
+    const queryURL = "https://rest.bandsintown.com/artists/" + searchterm + "/events?app_id=codingbootcamp";
+    request(queryURL, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            if (body) {
+                const data = JSON.parse(body);
+                if (data.Error == "Try again!") {
+
+                } else if (data.artistname.event !== undefined) {
+                    const deets = 
+                    "\n---------------YOUR RESULTS FOR" + data.artistname + data.artistname.event + " AND MOVIE THIS------------------------" +
+                    "\nVenue: " +data.artistname.event[0].venue +
+                    "---------------------------------------------------------------------------";
+                    console.log(deets);
+                }
             }
         }
-    }
+    })
+}
 
 function spotifyThis () {
 
@@ -83,8 +100,8 @@ spotify.search({
 
 function movieThis () {
 
-    console.log('\n -------------------\n')
-    if (searchterm === undefined) {
+    console.log('\n ... ... ... loading ... ... ... : ) : ) : )\n')
+    if (process.argv[3] === undefined) {
         searchterm = "Mr+Nobody";
         movieDeets();
     } else if (searchterm !==undefined) {
@@ -103,12 +120,12 @@ function movieDeets() {
                 const data = JSON.parse(body);
                 if (data.Error == "Try again!") {
 
-                } else if (data.Ratings[1].Value !== undefined) {
+                } else if (data.Ratings !== undefined) {
                     const deets = 
-                    "\n---------------YOUR RESULTS FOR" + data.Title + " AND MOVIE THIS------------------------" +
-                    "\nYear: " +data.Year +
-                    "\nRating: " +data.imdbRating +
-                    "\nActors: " +data.Actors + "---------------------------------------------------------------------------";
+                    "\n---------------YOUR RESULTS FOR " + data.Title + " AND MOVIE THIS-----------------------" +
+                    "\nYear movie was released: " +data.Year +
+                    "\nIMDB rating: " +data.imdbRating +
+                    "\nActors featured: " +data.Actors + "\n---------------------------------------------------------------------------";
                     console.log(deets);
                 }
 
