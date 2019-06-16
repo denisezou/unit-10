@@ -100,11 +100,11 @@ spotify.search({
 
 function movieThis () {
 
-    console.log('\n ... ... ... loading ... ... ... : ) : ) : )\n')
+    console.log('\n \n ... ... ... loading ... ... ... : ) : ) : ) ;) \n')
     if (process.argv[3] === undefined) {
         searchterm = "Mr+Nobody";
         movieDeets();
-    } else if (searchterm !==undefined) {
+    } else if (process.argv[3]!==undefined) {
         movieDeets();
     }
 
@@ -122,10 +122,12 @@ function movieDeets() {
 
                 } else if (data.Ratings !== undefined) {
                     const deets = 
-                    "\n---------------YOUR RESULTS FOR " + data.Title + " AND MOVIE THIS-----------------------" +
+                    "\n---------------YOUR RESULTS FOR " + data.Title + " AND MOVIE THIS-------------" +
                     "\nYear movie was released: " +data.Year +
                     "\nIMDB rating: " +data.imdbRating +
-                    "\nActors featured: " +data.Actors + "\n---------------------------------------------------------------------------";
+                    "\nActors featured: " +data.Actors + 
+                    "\nPlot boiled down: " +data.Plot +
+                    "\n------------------------------------------------------------------------\n";
                     console.log(deets);
                 }
 
