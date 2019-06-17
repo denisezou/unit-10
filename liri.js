@@ -33,6 +33,28 @@ function whichCommand(input, searchterm) {
 
 whichCommand(input, searchterm);
 
+function doThis() {
+  fs.readFile("random.txt", "UTF8", function(err, data) {
+    if (err) {
+      const deets =
+        "\n--------------TRIED DO THIS AND THERE'S NOTHING---------------";
+      console.log(deets);
+      fs.appendFile("log.txt", deets, function(err) {
+        if (err) {
+          return console.log("Recording to txt file did not go through.");
+        }
+      });
+    }
+    console.log(data);
+    const readableData = data.split(",");
+    console.log(readableData);
+    input = readableData[0];
+    process.argv[3] = readableData[1];
+    searchterm = process.argv[3];
+    whichCommand(input, searchterm);
+  });
+}
+
 function concertThis() {
   console.log("\n ------------------------------------------\n");
 
@@ -45,7 +67,7 @@ function concertThis() {
 }
 
 function concertDeets() {
-    console.log(searchterm)
+  console.log("\n \n ... ... ... loading ... ... ... : ) : ) : ) ;) \n");
   const queryURL =
     "https://rest.bandsintown.com/artists/" +
     searchterm +
@@ -54,12 +76,9 @@ function concertDeets() {
     if (!error && response.statusCode === 200) {
       if (body) {
         const data = JSON.parse(body);
-        console.log("this happened");
         if (data === undefined) {
-          console.log("this also happened");
-          console.log(data);
           const nada =
-            "------------------TRIED CONCERT THIS AND THERE'S NOTHING-------------------";
+            "------------------TRIED CONCERT THIS AND THERE'S NOTHING----------------";
           fs.appendFile("log.txt", nada, function(err) {
             if (err) {
               return console.log("Recording to txt file did not go through.");
@@ -134,7 +153,7 @@ function spotifyDeets() {
         console.log(deets);
       } else if (err) {
         const noDeets = console.log(err);
-        ("\n----------------------NO DEETS AVAILABLE FOR SPOTIFY---------------------------\n");
+        ("\n----------------------NO DEETS AVAILABLE FOR SPOTIFY-----------------------\n");
         console.log(noDeets);
       }
     }
