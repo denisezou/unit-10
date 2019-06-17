@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const fs = require('fs');
 const keys = require('./keys.js');
 const request= require('request')
 const Spotify = require('node-spotify-api');
@@ -37,7 +38,7 @@ function concertThis () {
     console.log('\n ------------------------------------------\n')
 
     if (searchterm === undefined) {
-        searchterm = "Taylor Swift";
+        searchterm = "Luke Bryan";
         concertDeets();
     } else if (searchterm !== undefined) {
         concertDeets();
@@ -45,12 +46,12 @@ function concertThis () {
     }
 
 function concertDeets () {
-    const queryURL = "https://rest.bandsintown.com/artists/" + searchterm + "/events?app_id=codingbootcamp";
+    const queryURL = "https://rest.bandsintown.com/artists/" + searchterm + "/events?app_id=8ec324ef826291ad5730d77aad454740";
     request(queryURL, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             if (body) {
                 const data = JSON.parse(body);
-                if (data.Error == "Try again!") {
+                if (data.artistname == "Try again!") {
 
                 } else if (data.artistname.event !== undefined) {
                     const deets = 
@@ -66,32 +67,38 @@ function concertDeets () {
 
 function spotifyThis () {
 
-    console.log('\n ------------------------------------------\n')
+    console.log('\n \n ... ... ... loading ... ... ... : ) : ) : ) ;) \n')
 
-    if (searchterm === undefined) {
+    if (process.argv[3] === undefined) {
         searchterm = "The Sign Ace of Base";
         spotifyDeets();
-    } else if (searchterm !== undefined) {
+    } else if (process.argv[3] !== undefined) {
         spotifyDeets();
     }
 }
 
 function spotifyDeets () {
 spotify.search({
-    type: "track",
-    query: title,
-    limit: 1,
+    type: 'track',
+    query: searchterm,
+    limit: 20,
 }, function (err, data) {
     if (data) {
-        const data = data.tracks.items
+        let info = data.tracks.items
         const deets = 
-            "\n----------------------YOUR RESULTS FOR " + data[0].name + " BY " + data[0].artists[0].name +
-            "\nAlbun: " + data[0].album.name +
-            "\nPreview: " + data[0].preview_url
+            "\n--------YOUR RESULTS FOR " + info[0].name + " BY " + info[0].artists[0].name + "---------" + 
+            "\nThe album is: " + info[0].album.name +
+            "\nPreview url of song: " + info[0].preview_url +
+            "\nRelease date: " + info[0].album.release_date +
+            "\nPopularity score: " + info[0].popularity + " out of 100" +
+            "\n------------------------------------------------------------------------\n";
+
         console.log(deets)
+
     } else if (err) {
         const noDeets =
-            "\n----------------------NO DEETS AVAILABLE FOR SPOTIFY-----------------------------------\n"
+        console.log(err)
+            "\n----------------------NO DEETS AVAILABLE FOR SPOTIFY---------------------------\n"
             console.log(noDeets);
     }
 });
@@ -119,7 +126,12 @@ function movieDeets() {
             if (body) {
                 const data = JSON.parse(body);
                 if (data.Error == "Try again!") {
-
+                    const nada = "------------------TRIED MOVIE THIS AND THERE'S NOTHING-------------------";
+                    fs.appendFile("log.txt", nada, function (err) {
+                        if (err) {
+                            return console.log("Recording to txt file did not go through.");
+                        };
+                    });
                 } else if (data.Ratings !== undefined) {
                     const deets = 
                     "\n---------------YOUR RESULTS FOR " + data.Title + " AND MOVIE THIS-------------" +
@@ -129,6 +141,11 @@ function movieDeets() {
                     "\nPlot boiled down: " +data.Plot +
                     "\n------------------------------------------------------------------------\n";
                     console.log(deets);
+                    fs.appendFile("log.txt", deets, function (err) {
+                        if (err) {
+                            return console.log("Recording to txt file did not go through.");
+                        };
+                    });
                 }
 
             }
